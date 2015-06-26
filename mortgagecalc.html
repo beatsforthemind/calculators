@@ -14,6 +14,7 @@
 	<input type="number" id="escrow">Taxes + Insurance (annual)</input><br>
 	<input type="button" onClick="calculate()" value="Calculate!" /><br><br>
 	<div id="output"></div>
+	<div id="outTable"></div>
   
     <script>
 		function calculate() {
@@ -26,12 +27,28 @@
 			intPaid = Math.pow(1 + mpr, numberOfPayments);
 			monthlyPaymentAmount = numberWithCommas(((totalAmount * mpr * intPaid)/(intPaid - 1)).toFixed(2));
 			totalIntPaid = numberWithCommas(((monthlyPaymentAmount * numberOfPayments) - amountBorrowed).toFixed(2));
-			outputStr = "Monthly Payment Amount: $" + monthlyPaymentAmount + "<br>Total Interest Paid: $" + totalIntPaid;
+			outputStr = "Monthly Payment Amount: $" + monthlyPaymentAmount + "<br>Total Interest Paid: $" + totalIntPaid + "<br><br>";
 			document.getElementById("output").innerHTML = outputStr;
 			
-			//for (i = 1; i < numberOfPayments; i++) {
+			paymentAmountNoEscrow = numberWithCommas(((amountBorrowed * mpr * intPaid)/(intPaid - 1)).toFixed(2));
+			
+			var x = [];
+			x[0] = ["Payment","Amount","Principal","Interest","Balance"];
+			var tableOutput = "<table><tr><td>" + x[0][0] + "</td><td>" + x[0][1] + "</td><td>" + x[0][2] +
+					"</td><td>" + x[0][3] + "</td><td>" + x[0][4] + "</td></tr>";
+			currBal = amountBorrowed;
+			for (i = 1; i < numberOfPayments; i++) {
+				accruedInt = numberWithCommas((currBal * mpr).toFixed(2));
+				prinReduction = numberWithCommas((paymentAmountNoEscrow - accruedInt).toFixed(2));
+				currBal = (currBal - prinReduction).toFixed(2);
+				strCurrBal = numberWithCommas((currBal - prinReduction).toFixed(2));
+				x[i] = [i, paymentAmountNoEscrow, prinReduction, accruedInt, strCurrBal];
 				
-			//}
+				tableOutput = tableOutput + "<tr><td>" + x[i][0] + "</td><td> $" + x[i][1] + "</td><td> $" + x[i][2] +
+					"</td><td> $" + x[i][3] + "</td><td> $" + x[i][4] + "</td></tr>";
+			}
+			tableOutput = tableOutput + "</table>";
+			document.getElementById("outTable").innerHTML = tableOutput;
 		}
 		
 		function numberWithCommas(x) { //credit to Elias Zamaria on StackOverflow for this function
