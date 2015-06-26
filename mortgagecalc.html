@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mortgage Calculator</title>
+  </head>
+  <body>
+    <!-- No input is currently validated, which is, you know, bad -->
+    <input type="number" id="amount">Amount borrowed</input><br>
+	<input type="number" id="term">Term (in years)</input><br>
+	<input type="number" id="apr">APR</input><br>
+	<input type="button" onClick="calculate()" value="Calculate"! /><br><br>
+	<div id="output"></div>
+  
+    <script>
+		function calculate() {
+			amount = Number(document.getElementById("amount").value);
+			term = Number(document.getElementById("term").value);
+			apr = (Number(document.getElementById("apr").value) * 0.01); //this needs to be a percent, not an int
+			mpr = apr / 12; //monthly percentage rate
+			numberOfPayments = term * 12;
+			intPaid = Math.pow(1 + mpr, numberOfPayments);
+			monthlyPaymentAmount = "Monthly Payment Amount: $" + ((amount * mpr * intPaid)/(intPaid - 1)).toFixed(2);
+			document.getElementById("output").innerHTML = monthlyPaymentAmount;
+		}
+    </script>
+  </body>
+</html>
