@@ -21,7 +21,7 @@
         
         <!--
           <label>Input Label
-            <input type="number" placeholder="Placeholder" />
+            <input type="number" placeholder="" />
           </label>
         -->
         <label>Amount borrowed
@@ -40,7 +40,8 @@
         	<input type="number" id="escrow" placeholder="Taxes + Insurance (annual)" />
         </label>
       	
-      	<input type="button" onClick="calculateMort()" value="Calculate!" />
+      	<br />
+      	<input type="button" onClick="calculate()" value="Calculate!" />
       	
       	<div id="output"></div>
       	<div id="outTable"></div>
@@ -48,39 +49,27 @@
       </div>
     </div>
     
-    <script src="js/vendor/jquery.js"></script>
-    <script src="js/foundation.min.js"></script>
+
     <script>
-      $(document).foundation();
-    </script>
-    
-    <!-- 
-      We could put all the calculator js in js/master.js if that would be easier
-      ie. shared functions and stuff
-    -->
-    <script src="js/master.js"></script>
-    
-    <script type="text/javascript">
-      function capNum(elemId) {
-        return Number(document.getElementById(elemId).value.trim());
+      function captureNumber(id) {
+        return Number(document.getElementById(id).value);
       }
-      
       function numberWithCommas(x) { //credit to Elias Zamaria on StackOverflow for this function
   			return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   		}
   		
-  		function calculateMort() {
-  			amountBorrowed = capNum("amount");
-  			term = capNum("term");
-  			totalAmount = amountBorrowed + (capNum("escrow") * term);
-  			apr = (capNum("apr") * 0.01); //this needs to be a percent, not an int
+  		function calculate() {
+  			amountBorrowed = Number(document.getElementById("amount").value);
+  			term = Number(document.getElementById("term").value);
+  			totalAmount = amountBorrowed + (Number(document.getElementById("escrow").value) * term);
+  			apr = (Number(document.getElementById("apr").value) * 0.01); //this needs to be a percent, not an int
   			mpr = apr / 12; //monthly percentage rate
   			numberOfPayments = term * 12;
   			intPaid = Math.pow(1 + mpr, numberOfPayments);
   			monthlyPaymentAmount = numberWithCommas(((totalAmount * mpr * intPaid)/(intPaid - 1)).toFixed(2));
   			totalIntPaid = numberWithCommas(((monthlyPaymentAmount * numberOfPayments) - amountBorrowed).toFixed(2));
+  			outputStr = "Monthly Payment Amount: $" + monthlyPaymentAmount + "<br>Total Interest Paid: $" + totalIntPaid + "<br><br>";
   			
-  			outputStr = "Monthly Payment Amount: $" + monthlyPaymentAmount + "<br />Total Interest Paid: $" + totalIntPaid + "<br /><br />";
   			document.getElementById("output").innerHTML = outputStr;
   			
   			paymentAmountNoEscrow = numberWithCommas(((amountBorrowed * mpr * intPaid)/(intPaid - 1)).toFixed(2));
@@ -102,8 +91,14 @@
   			}
   			tableOutput = tableOutput + "</table>";
   			document.getElementById("outTable").innerHTML = tableOutput;
-  		}	
-    </script> 
+  		}
+    </script>
+    
+    <script src="js/vendor/jquery.js"></script>
+    <script src="js/foundation.min.js"></script>
+    <script>
+      $(document).foundation();
+    </script>
     
     <br />
     <br />
